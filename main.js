@@ -211,3 +211,64 @@ GameSquare.Rectangle = class extends GameSquare.Object2D {
         return colDir
     }
 }
+
+GameSquare._preloadedFiles = {}
+
+GameSquare.Image = class extends GameSquare.Object2D {
+    constructor(config) {
+        super(config)
+        this.image = config.imgName
+        let image = GameSquare._preloadedFiles[this.image]
+        let self = this
+        let onimageload = () => {self._size = new GameSquare.Vector2(image.width, image.height)}
+        image.onload = onimageload
+        this._updateCalcPos()
+    }
+
+    get width() {
+        return this._size.x
+    }
+
+    get height() {
+        return this._size.y
+    }
+
+    set width(v) {
+        this._size.x = v
+    }
+
+    set height(v) {
+        this._size.y = v
+    }
+
+    static preload(imageSrc, imageName) {
+        let image = document.createElement("img")
+        image.src = imageSrc
+        GameSquare._preloadedFiles[imageName] = image
+    }
+
+    _updateCalcPos() {
+        if (this._parent) {
+            this._calcPos = new GameSquare.Vector2(this.position.x + (this._parent._calcPos ? this._parent._calcPos.x : 0), this.position.y + (this._parent._calcPos ? this._parent._calcPos.y : 0))
+        }
+    }
+
+    _render() {
+        this._updateCalcPos()
+        GameSquare._$ctx.drawImage(GameSquare._preloadedFiles[this.image], this._calcPos.x, this._calcPos.y, this._size.x, this._size.y)
+    }
+
+    update() {
+        this._eventManeger.ontick()
+        this._render()
+
+        this._children.forEach(child => {
+            child.update()
+        })
+    }
+
+    scaleTo(s = 1) {
+        this._size.x = GameSquare._preloadedFiles[this.image].width * s
+        this._size.y = GameSquare._preloadedFiles[this.image].height * s
+    }
+}
