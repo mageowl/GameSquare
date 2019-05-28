@@ -55,7 +55,7 @@ const GameSquare = {
             this._children = []
             this._eventManeger = new GameSquare.EventManeger(this)
             this._updateCalcPos()
-            this._componenetLoadConfig = {
+            this.componentLoadConfig = {
                 thisObj: this,
                 addedComponenets: [],
                 updateEvents: []
@@ -99,7 +99,7 @@ const GameSquare = {
         update() {
             this._updateCalcPos()
             this._eventManeger.ontick()
-            this._componenetLoadConfig.updateEvents.forEach((event) => {
+            this.componentLoadConfig.updateEvents.forEach((event) => {
                 event(this)
             })
             this._children.forEach(child => {
@@ -152,6 +152,9 @@ GameSquare.Scene = class extends GameSquare.Object2D {
         GameSquare._$ctx.fillStyle = this.view.skycolor
         GameSquare._$ctx.fillRect(0, 0, GameSquare._$ctx.canvas.width, GameSquare._$ctx.canvas.height)
         GameSquare._$ctx.fillStyle = "black"
+        this.componentLoadConfig.updateEvents.forEach((event) => {
+            event(this)
+        })
         this._children.forEach(child => {
             child.update()
         })
@@ -268,6 +271,10 @@ GameSquare.Image = class extends GameSquare.Object2D {
 
     set height(v) {
         this._size.y = v
+    }
+
+    set onimageload(e) {
+        GameSquare._preloadedFiles[this.image].onload = e
     }
 
     static preload(imageSrc, imageName) {
