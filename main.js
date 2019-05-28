@@ -51,13 +51,15 @@ const GameSquare = {
     Object2D: class {
         constructor(config) {
             this.position = config.pos instanceof GameSquare.Vector2 ? config.pos : GameSquare.Vector2.fromObject(config.pos)
-            this._parent = config.parent || null
+            if (config.parent) {
+                config.parent.add(this)
+            }
             this._children = []
             this._eventManeger = new GameSquare.EventManeger(this)
             this._updateCalcPos()
             this.componentLoadConfig = {
                 thisObj: this,
-                addedComponenets: [],
+                addedComponents: [],
                 updateEvents: []
             }
         }
@@ -114,23 +116,23 @@ const GameSquare = {
         }    
     },
 
-    Componenet: class {
+    Component: class {
         constructor(name, obj) {
             this._name = name
             this._loadObj = obj
         }
 
-        static import(componenet, loaderObj) {
-            if (loaderObj.addedComponenets.includes(componenet._name)) {
-                if (componenet._loadObj.properties) {
-                    componenet._loadObj.properties.forEach((p) => {
+        static import(component, loaderObj) {
+            if (loaderObj.addedComponents.includes(component._name)) {
+                if (component._loadObj.properties) {
+                    component._loadObj.properties.forEach((p) => {
                         loaderObj.thisObj[p.name] = p.value
                     })
                 }
-                if (componenet._loadObj.ontick) {
-                    loaderObj.updateEvents.push(componenet._loadObj.ontick)
+                if (component._loadObj.ontick) {
+                    loaderObj.updateEvents.push(component._loadObj.ontick)
                 }
-                loaderObj.addedComponenets.push(componenet._name)
+                loaderObj.addedComponents.push(component._name)
             }
         }
     }
