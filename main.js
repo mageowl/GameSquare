@@ -99,6 +99,9 @@ const GameSquare = {
         update() {
             this._updateCalcPos()
             this._eventManeger.ontick()
+            this._componenetLoadConfig.updateEvents.forEach((event) => {
+                event(this)
+            })
             this._children.forEach(child => {
                 child.update()
             })
@@ -114,18 +117,18 @@ const GameSquare = {
     Componenet: class {
         constructor(name, obj) {
             this._name = name
-            this.loadObj = obj
+            this._loadObj = obj
         }
 
         static import(componenet, loaderObj) {
             if (loaderObj.addedComponenets.includes(componenet._name)) {
-                if (componenet.loadObj.properties) {
-                    componenet.loadObj.properties.forEach((p) => {
+                if (componenet._loadObj.properties) {
+                    componenet._loadObj.properties.forEach((p) => {
                         loaderObj.thisObj[p.name] = p.value
                     })
                 }
-                if (componenet.loadObj.ontick) {
-                    loaderObj.updateEvents.push(componenet.loadObj.ontick)
+                if (componenet._loadObj.ontick) {
+                    loaderObj.updateEvents.push(componenet._loadObj.ontick)
                 }
                 loaderObj.addedComponenets.push(componenet._name)
             }
