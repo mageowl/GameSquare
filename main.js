@@ -55,6 +55,11 @@ const GameSquare = {
             this._children = []
             this._eventManeger = new GameSquare.EventManeger(this)
             this._updateCalcPos()
+            this._componenetLoadConfig = {
+                thisObj: this,
+                addedComponenets: [],
+                updateEvents: []
+            }
         }
 
         set parent(obj) {
@@ -104,6 +109,27 @@ const GameSquare = {
                 this._calcPos = new GameSquare.Vector2(this.position.x + (this._parent._calcPos ? this._parent._calcPos.x : 0), this.position.y + (this._parent._calcPos ? this._parent._calcPos.y : 0))
             }
         }    
+    },
+
+    Componenet: class {
+        constructor(name, obj) {
+            this._name = name
+            this.loadObj = obj
+        }
+
+        static import(componenet, loaderObj) {
+            if (loaderObj.addedComponenets.includes(componenet._name)) {
+                if (componenet.loadObj.properties) {
+                    componenet.loadObj.properties.forEach((p) => {
+                        loaderObj.thisObj[p.name] = p.value
+                    })
+                }
+                if (componenet.loadObj.ontick) {
+                    loaderObj.updateEvents.push(componenet.loadObj.ontick)
+                }
+                loaderObj.addedComponenets.push(componenet._name)
+            }
+        }
     }
 }
 
