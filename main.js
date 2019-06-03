@@ -16,6 +16,14 @@ const GameSquare = {
             onload.bind(this)
             window.onload = onload
         }
+
+        setCurrentScene(scene) {
+            this._currentScene.running = false
+            this._currentScene = scene
+            this._currentScene.view = this
+            scene.running = true
+            this._currentScene.update()
+        }
     },
 
     Vector2: class {
@@ -150,9 +158,11 @@ GameSquare.Scene = class extends GameSquare.Object2D {
         delete this._eventManeger
         delete this.position
         this.view = null
+        this.running = true
     }
 
     update() {
+        if (this.running) return
         GameSquare._$ctx.clearRect(0, 0, GameSquare._$ctx.canvas.width, GameSquare._$ctx.canvas.height)
         GameSquare._$ctx.fillStyle = this.view.skycolor
         GameSquare._$ctx.fillRect(0, 0, GameSquare._$ctx.canvas.width, GameSquare._$ctx.canvas.height)
@@ -193,12 +203,6 @@ GameSquare.Rectangle = class extends GameSquare.Object2D {
 
     set height(v) {
         this._size.y = v
-    }
-
-    _updateCalcPos() {
-        if (this._parent) {
-            this._calcPos = new GameSquare.Vector2(this.position.x + (this._parent._calcPos ? this._parent._calcPos.x : 0), this.position.y + (this._parent._calcPos ? this._parent._calcPos.y : 0))
-        }
     }
 
     _render() {
@@ -288,12 +292,6 @@ GameSquare.Image = class extends GameSquare.Object2D {
         GameSquare._preloadedFiles[imageName] = image
     }
 
-    _updateCalcPos() {
-        if (this._parent) {
-            this._calcPos = new GameSquare.Vector2(this.position.x + (this._parent._calcPos ? this._parent._calcPos.x : 0), this.position.y + (this._parent._calcPos ? this._parent._calcPos.y : 0))
-        }
-    }
-
     _render() {
         this._updateCalcPos()
         GameSquare._$ctx.drawImage(GameSquare._preloadedFiles[this.image], this._calcPos.x, this._calcPos.y, this._size.x, this._size.y)
@@ -311,5 +309,32 @@ GameSquare.Image = class extends GameSquare.Object2D {
     scaleTo(s = 1) {
         this._size.x = GameSquare._preloadedFiles[this.image].width * s
         this._size.y = GameSquare._preloadedFiles[this.image].height * s
+    }
+}
+
+GameSquare.Text = class extends GameSquare.Object2D {
+    constructor(config) {
+        super(config)
+        this._text = config.text
+        this._color = config.color || "black"
+        this._font = config.font || "30px Verdana"
+    }
+
+    update() {
+        this._eventManeger.ontick()
+        this._render()
+
+        this._children.forEach(child => {
+            child.update()
+        })
+    }
+
+    _render() {
+        this._updateCalcPos()
+        GameSquare._$ctx.font = this._font
+        GameSquare._$ctx.fillStyle = this._color
+        GameSquare._$ctx.fillText(this._text, this._calcPos.x, this._calcPos.x)
+        GameSquare._$ctx.fillStyle = "black"
+        GameSquare._$ctx.font = "30px Verdana"
     }
 }
