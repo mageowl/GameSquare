@@ -51,8 +51,9 @@ const GameSquare = {
     Object2D: class {
         constructor(config) {
             this.position = config.pos instanceof GameSquare.Vector2 ? config.pos : GameSquare.Vector2.fromObject(config.pos)
+            this._parent = null
             if (config.parent) {
-                config.parent.add(this)
+                this.parent = config.parent
             }
             this._children = []
             this._eventManeger = new GameSquare.EventManeger(this)
@@ -60,7 +61,9 @@ const GameSquare = {
             this.componentLoadConfig = {
                 thisObj: this,
                 addedComponents: [],
-                updateEvents: []
+                componentData: {
+                    updateEvents: []
+                }
             }
         }
 
@@ -130,7 +133,7 @@ const GameSquare = {
                     })
                 }
                 if (component._loadObj.ontick) {
-                    loaderObj.updateEvents.push(component._loadObj.ontick)
+                    loaderObj.componentData.updateEvents.push(component._loadObj.ontick)
                 }
                 loaderObj.addedComponents.push(component._name)
             }
