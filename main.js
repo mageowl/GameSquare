@@ -328,6 +328,10 @@ GameSquare.Text = class extends GameSquare.Object2D {
         this._align = config.center || "center"
     }
 
+    get text() {
+        return this._text
+    }
+
     update() {
         this._render()
         this._eventManeger.ontick()
