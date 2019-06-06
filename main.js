@@ -111,7 +111,7 @@ const GameSquare = {
         update() {
             this._updateCalcPos()
             this._eventManeger.ontick()
-            this.componentLoadConfig.updateEvents.forEach((event) => {
+            this.componentLoadConfig.componentData.updateEvents.forEach((event) => {
                 event(this)
             })
             this._children.forEach(child => {
@@ -215,6 +215,10 @@ GameSquare.Rectangle = class extends GameSquare.Object2D {
         this._eventManeger.ontick()
         this._render()
 
+        this.componentLoadConfig.componentData.updateEvents.forEach((event) => {
+            event(this)
+        })
+
         this._children.forEach(child => {
             child.update()
         })
@@ -299,6 +303,9 @@ GameSquare.Image = class extends GameSquare.Object2D {
     update() {
         this._eventManeger.ontick()
         this._render()
+        this._children.forEach(child => {
+            child.update()
+        })
 
         this._children.forEach(child => {
             child.update()
@@ -317,11 +324,15 @@ GameSquare.Text = class extends GameSquare.Object2D {
         this._text = config.text
         this._color = config.color || "black"
         this._font = config.font || "30px Verdana"
+        this._align = config.center || "center"
     }
 
     update() {
         this._render()
         this._eventManeger.ontick()
+        this._children.forEach(child => {
+            child.update()
+        })
 
         this._children.forEach(child => {
             child.update()
@@ -332,6 +343,7 @@ GameSquare.Text = class extends GameSquare.Object2D {
         this._updateCalcPos()
         GameSquare._$ctx.fillStyle = this._color
         GameSquare._$ctx.font = this._font
+        GameSquare._$ctx.textAlign = this._align
         GameSquare._$ctx.fillText(this._text, this._calcPos.x, this._calcPos.y)
         GameSquare._$ctx.fillStyle = "black"
     }
