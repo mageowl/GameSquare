@@ -6,7 +6,7 @@ const GameSquare = {
             this._ctx = this._canvas.getContext("2d")
             this.skycolor = "white"
             GameSquare._$ctx = this._ctx
-            if (!document.getElementById(canvasID)) {
+            if (!document.getElementById(canvasID) && (width && height)) {
                 this._canvas.width = width
                 this._canvas.height = height
             }
@@ -335,6 +335,5 @@ GameSquare.Text = class extends GameSquare.Object2D {
         GameSquare._$ctx.fillStyle = this._color
         GameSquare._$ctx.fillText(this._text, this._calcPos.x, this._calcPos.x)
         GameSquare._$ctx.fillStyle = "black"
-        GameSquare._$ctx.font = "30px Verdana"
     }
 }
