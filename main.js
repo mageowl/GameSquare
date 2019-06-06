@@ -13,8 +13,7 @@ const GameSquare = {
             this._currentScene = scene
             this._currentScene.view = this
             let onload = () => {this._currentScene.update()}
-            onload.bind(this)
-            window.onload = onload
+            window.onload = onload.bind(this)
         }
 
         setCurrentScene(scene) {
@@ -321,8 +320,8 @@ GameSquare.Text = class extends GameSquare.Object2D {
     }
 
     update() {
-        this._eventManeger.ontick()
         this._render()
+        this._eventManeger.ontick()
 
         this._children.forEach(child => {
             child.update()
