@@ -166,7 +166,7 @@ GameSquare.Scene = class extends GameSquare.Object2D {
         GameSquare._$ctx.fillStyle = this.view.skycolor
         GameSquare._$ctx.fillRect(0, 0, GameSquare._$ctx.canvas.width, GameSquare._$ctx.canvas.height)
         GameSquare._$ctx.fillStyle = "black"
-        this.componentLoadConfig.updateEvents.forEach((event) => {
+        this.componentLoadConfig.componentData.updateEvents.forEach((event) => {
             event(this)
         })
         this._children.forEach(child => {
