@@ -161,7 +161,7 @@ GameSquare.Scene = class extends GameSquare.Object2D {
     }
 
     update() {
-        if (this.running) return
+        if (!this.running) return
         GameSquare._$ctx.clearRect(0, 0, GameSquare._$ctx.canvas.width, GameSquare._$ctx.canvas.height)
         GameSquare._$ctx.fillStyle = this.view.skycolor
         GameSquare._$ctx.fillRect(0, 0, GameSquare._$ctx.canvas.width, GameSquare._$ctx.canvas.height)
