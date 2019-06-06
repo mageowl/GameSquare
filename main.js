@@ -132,7 +132,8 @@ const GameSquare = {
             this._loadObj = obj
         }
 
-        static import(component, loaderObj) {
+        static import(component, obj2D) {
+            let loaderObj = obj2D.componentLoadConfig
             if (loaderObj.addedComponents.includes(component._name)) {
                 if (component._loadObj.properties) {
                     component._loadObj.properties.forEach((p) => {
