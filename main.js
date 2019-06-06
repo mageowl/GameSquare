@@ -330,9 +330,15 @@ GameSquare.Text = class extends GameSquare.Object2D {
 
     _render() {
         this._updateCalcPos()
-        GameSquare._$ctx.font = this._font
         GameSquare._$ctx.fillStyle = this._color
-        GameSquare._$ctx.fillText(this._text, this._calcPos.x, this._calcPos.x)
+        GameSquare._$ctx.font = this._font
+        GameSquare._$ctx.fillText(this._text, this._calcPos.x, this._calcPos.y)
         GameSquare._$ctx.fillStyle = "black"
+    }
+
+    _updateCalcPos() {
+        if (this._parent) {
+            this._calcPos = new GameSquare.Vector2(this.position.x + (this._parent._calcPos ? this._parent._calcPos.x : 0), this.position.y + (this._parent._calcPos ? this._parent._calcPos.y : 0))
+        }
     }
 }
