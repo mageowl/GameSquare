@@ -168,8 +168,26 @@ GameSquare.Scene = class extends GameSquare.Object2D {
         delete this.destroy
         delete this._eventManeger
         delete this.position
+        this._onsceneload = () => {}
         this.view = null
-        this.running = true
+        this._running = true
+    }
+
+    set onsceneload(v) {
+        this._onsceneload = v
+    }
+
+    set running(s) {
+        if (s) {
+            this._onsceneload()
+            this._running = true
+        } else {
+            this._running = false
+        }
+    }
+
+    get running() {
+        return this._running
     }
 
     update() {
