@@ -1,3 +1,4 @@
+// GAMESQUARE: V2.0! BY -OWL-
 
 const GameSquare = {
     ViewPort: class {
