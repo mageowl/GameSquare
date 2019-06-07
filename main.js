@@ -332,6 +332,10 @@ GameSquare.Text = class extends GameSquare.Object2D {
         return this._text
     }
 
+    set text(v) {
+        this._text = v
+    }
+
     update() {
         this._render()
         this._eventManeger.ontick()
