@@ -141,6 +141,16 @@ const GameSquare = {
                         loaderObj.thisObj[p.name] = p.value
                     })
                 }
+
+                if (component._loadObj.methods) {
+                    for (const method in component._loadObj.methods) {
+                        if (component._loadObj.methods.hasOwnProperty(method)) {
+                            const method = component._loadObj.methods[method];
+                            loaderObj.thisObj[method.name] = method.bind(loaderObj.thisObj)
+                        }
+                    }
+                }
+
                 if (component._loadObj.ontick) {
                     loaderObj.componentData.updateEvents.push(component._loadObj.ontick)
                 }
