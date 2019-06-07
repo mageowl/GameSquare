@@ -145,8 +145,8 @@ const GameSquare = {
                 if (component._loadObj.methods) {
                     for (const method in component._loadObj.methods) {
                         if (component._loadObj.methods.hasOwnProperty(method)) {
-                            const method = component._loadObj.methods[method];
-                            loaderObj.thisObj[method.name] = method.bind(loaderObj.thisObj)
+                            const m = component._loadObj.methods[method];
+                            loaderObj.thisObj[m.name] = m.bind(loaderObj.thisObj)
                         }
                     }
                 }
