@@ -265,7 +265,11 @@ GameSquare.Image = class extends GameSquare.Object2D {
         this.image = config.imgName
         let image = GameSquare._preloadedFiles[this.image]
         let self = this
-        let onimageload = () => {self._size = new GameSquare.Vector2(image.width, image.height)}
+        this._eventManeger._onimageload = () => {}
+        let onimageload = () => {
+            self._size = new GameSquare.Vector2(image.width, image.height)
+            this._eventManeger._onimageload()
+        }
         image.onload = onimageload
         this._updateCalcPos()
     }
@@ -287,7 +291,7 @@ GameSquare.Image = class extends GameSquare.Object2D {
     }
 
     set onimageload(e) {
-        GameSquare._preloadedFiles[this.image].onload = e
+        this._eventManeger._onimageload = e
     }
 
     static preload(imageSrc, imageName) {
