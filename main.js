@@ -359,6 +359,7 @@ GameSquare.Text = class extends GameSquare.Object2D {
         this._color = config.color || "black"
         this._font = config.font || "30px Verdana"
         this._align = config.center || "center"
+        this._lineHeight = config.lineHeight || 40
     }
 
     get text() {
@@ -386,7 +387,12 @@ GameSquare.Text = class extends GameSquare.Object2D {
         GameSquare._$ctx.fillStyle = this._color
         GameSquare._$ctx.font = this._font
         GameSquare._$ctx.textAlign = this._align
-        GameSquare._$ctx.fillText(this._text, this._calcPos.x, this._calcPos.y)
+        let y = this._calcPos.y
+        let lines = this._text.split("\n")
+        lines.forEach(textLine => {
+            GameSquare._$ctx.fillText(textLine, this._calcPos.x, y)
+            y += this.lineHeight
+        }, this);
         GameSquare._$ctx.fillStyle = "black"
     }
 
