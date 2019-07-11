@@ -49,13 +49,6 @@ const GameSquare = {
         }
     },
 
-    EventManeger: class {
-        constructor(object) {
-            this.ontick = new Function().bind(object)
-            this.ondestroy = () => {}
-        }
-    },
-
     Object2D: class {
         constructor(config) {
             this.position = config.pos instanceof GameSquare.Vector2 ? config.pos : GameSquare.Vector2.fromObject(config.pos)
@@ -64,7 +57,6 @@ const GameSquare = {
                 this.parent = config.parent
             }
             this._children = []
-            this._eventManeger = new GameSquare.EventManeger(this)
             this._updateCalcPos()
             this.componentLoadConfig = {
                 thisObj: this,
@@ -73,6 +65,10 @@ const GameSquare = {
                     updateEvents: []
                 }
             }
+
+            this._firstTick = true
+
+            this._eventSystem._o = this
         }
 
         set parent(obj) {
@@ -87,12 +83,29 @@ const GameSquare = {
             return this._children
         }
 
-        set ontick(f) {
-            this._eventManeger.ontick = f.bind(this, this)
+        on(event, callback) {
+            if (this._eventSystem._callbacks[event]) {
+                this._eventSystem._callbacks[event].push(callback)
+            } else {
+                this._eventSystem._callbacks[event] = []
+                this._eventSystem._callbacks[event].push(callback)
+            }
         }
 
-        set ondestroy(f) {
-            this._eventManeger.ondestroy = f
+        trigger(event) {
+            this._eventSystem._t(event)
+        }
+
+        _eventSystem = {
+            _callbacks: {
+                //event: [functions...]
+            },
+            _t(e) {
+                if (!this._callbacks[e]) return
+                this._callbacks[e].forEach(event => {
+                    event(this._o)
+                });
+            },
         }
 
         add(obj) {
@@ -104,20 +117,26 @@ const GameSquare = {
         }
 
         destroy() {
-            this._eventManeger.ondestroy()
+            this._eventSystem._t("destroy")
             this._parent._children.concat(this._children)
             this._parent._children.splice(this._parent._children.indexOf(this), 1)
         }
 
         update() {
+            if (this._parent._firstTick) {
+                this._eventSystem._t("init")
+            }
             this._updateCalcPos()
-            this._eventManeger.ontick()
+            this._eventSystem._t("tick")
             this.componentLoadConfig.componentData.updateEvents.forEach((event) => {
                 event(this)
             })
             this._children.forEach(child => {
                 child.update()
             })
+            if (this._parent._firstTick) {
+                this._firstTick = false
+            }
         }
 
         _updateCalcPos() {
@@ -234,6 +253,22 @@ GameSquare.Rectangle = class extends GameSquare.Object2D {
         this._size.y = v
     }
 
+    get x() {
+        return this.position.x
+    }
+
+    get y() {
+        return this.position.y
+    }
+
+    set x(v) {
+        this.position.x = v
+    }
+
+    set y(v) {
+        this.position.y = v
+    }
+
     _render() {
         this._updateCalcPos()
         GameSquare._$ctx.fillStyle = this.color
@@ -242,7 +277,10 @@ GameSquare.Rectangle = class extends GameSquare.Object2D {
     }
 
     update() {
-        this._eventManeger.ontick()
+        if (this._parent._firstTick) {
+            this._eventSystem._t("init")
+        }
+        this._eventSystem._t("tick")
         this._render()
 
         this.componentLoadConfig.componentData.updateEvents.forEach((event) => {
@@ -252,6 +290,9 @@ GameSquare.Rectangle = class extends GameSquare.Object2D {
         this._children.forEach(child => {
             child.update()
         })
+        if (this._parent._firstTick) {
+            this._firstTick = false
+        }
     }
 
     static collisionSide(shapeA, shapeB) {
@@ -335,7 +376,10 @@ GameSquare.Image = class extends GameSquare.Object2D {
     }
 
     update() {
-        this._eventManeger.ontick()
+        if (this._parent._firstTick) {
+            this._eventSystem._t("init")
+        }
+        this._eventSystem._t("tick")
         this._render()
         this._children.forEach(child => {
             child.update()
@@ -344,6 +388,9 @@ GameSquare.Image = class extends GameSquare.Object2D {
         this._children.forEach(child => {
             child.update()
         })
+        if (this._parent._firstTick) {
+            this._eventSystem._t("init")
+        }
     }
 
     scaleTo(s = 1) {
@@ -371,8 +418,12 @@ GameSquare.Text = class extends GameSquare.Object2D {
     }
 
     update() {
+        if (this._firstTick) {
+            this._eventSystem._t("init")
+            this._firstTick = false
+        }
         this._render()
-        this._eventManeger.ontick()
+        this._eventSystem._t("tick")
         this._children.forEach(child => {
             child.update()
         })
@@ -387,12 +438,12 @@ GameSquare.Text = class extends GameSquare.Object2D {
         GameSquare._$ctx.fillStyle = this._color
         GameSquare._$ctx.font = this._font
         GameSquare._$ctx.textAlign = this._align
-        let y = this._calcPos.y
-        let lines = this._text.split("\n")
-        lines.forEach(textLine => {
-            GameSquare._$ctx.fillText(textLine, this._calcPos.x, y)
-            y += this.lineHeight
-        }, this);
+        let lines = String(this._text).split(":n")
+        let yPos = this._calcPos.y
+        lines.forEach(line => {
+            GameSquare._$ctx.fillText(line, this._calcPos.x, yPos)
+            yPos += this._lineHeight
+        })
         GameSquare._$ctx.fillStyle = "black"
     }
 
