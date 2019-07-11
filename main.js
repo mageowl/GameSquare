@@ -1,7 +1,7 @@
-// GAMESQUARE: V2.0! BY -OWL-
+// GAMESQUARE: V1.1 BETA! BY -OWL-
 
 const GameSquare = {
-    ViewPort: class {
+    Viewport: class {
         constructor(canvasID, width, height, scene) {
             this._canvas = document.getElementById(canvasID) || document.body.appendChild(document.createElement("canvas"))
             this._ctx = this._canvas.getContext("2d")
@@ -128,6 +128,13 @@ const GameSquare = {
             }
             this._updateCalcPos()
             this._eventSystem._t("tick")
+            for (const eventName in this._eventSystem._callbacks) {
+                if (this._eventSystem._callbacks.hasOwnProperty(eventName)) {
+                    if (eventName.split("_")[0] == "keypress" && GameSquare._keysPressed[eventName.split("_")[1]]) {
+                        this._eventSystem._t(eventName)
+                    }
+                }
+            }
             this.componentLoadConfig.componentData.updateEvents.forEach((event) => {
                 event(this)
             })
@@ -176,7 +183,8 @@ const GameSquare = {
                 loaderObj.addedComponents.push(component._name)
             }
         }
-    }
+    },
+    _keysPressed: {}
 }
 
 GameSquare.Scene = class extends GameSquare.Object2D {
@@ -281,6 +289,13 @@ GameSquare.Rectangle = class extends GameSquare.Object2D {
             this._eventSystem._t("init")
         }
         this._eventSystem._t("tick")
+        for (const eventName in this._eventSystem._callbacks) {
+            if (this._eventSystem._callbacks.hasOwnProperty(eventName)) {
+                if (eventName.split("_")[0] == "keypress" && GameSquare._keysPressed[eventName.split("_")[1]]) {
+                    this._eventSystem._t(eventName)
+                }
+            }
+        }
         this._render()
 
         this.componentLoadConfig.componentData.updateEvents.forEach((event) => {
@@ -380,6 +395,13 @@ GameSquare.Image = class extends GameSquare.Object2D {
             this._eventSystem._t("init")
         }
         this._eventSystem._t("tick")
+        for (const eventName in this._eventSystem._callbacks) {
+            if (this._eventSystem._callbacks.hasOwnProperty(eventName)) {
+                if (eventName.split("_")[0] == "keypress" && GameSquare._keysPressed[eventName.split("_")[1]]) {
+                    this._eventSystem._t(eventName)
+                }
+            }
+        }
         this._render()
         this._children.forEach(child => {
             child.update()
@@ -422,8 +444,15 @@ GameSquare.Text = class extends GameSquare.Object2D {
             this._eventSystem._t("init")
             this._firstTick = false
         }
-        this._render()
         this._eventSystem._t("tick")
+        for (const eventName in this._eventSystem._callbacks) {
+            if (this._eventSystem._callbacks.hasOwnProperty(eventName)) {
+                if (eventName.split("_")[0] == "keypress" && GameSquare._keysPressed[eventName.split("_")[1]]) {
+                    this._eventSystem._t(eventName)
+                }
+            }
+        }
+        this._render()
         this._children.forEach(child => {
             child.update()
         })
@@ -453,3 +482,10 @@ GameSquare.Text = class extends GameSquare.Object2D {
         }
     }
 }
+
+window.addEventListener("keydown", (e) => {
+    GameSquare._keysPressed[e.key] = true
+})
+window.addEventListener("keyup", (e) => {
+    GameSquare._keysPressed[e.key] = false
+})

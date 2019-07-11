@@ -1,12 +1,19 @@
 // VEIWPORT
 const mainScene = new GameSquare.Scene()
-const veiwport = new GameSquare.ViewPort("", 500, 500, mainScene)
+const veiwport = new GameSquare.Viewport("", 500, 500, mainScene)
 
 // IMAGES
-GameSquare.Image.preload("smiley.png", "emojiHappy")
-GameSquare.Image.preload("suprized.jpg", "emojiSuprized")
+
 
 // OBJECTS
-var happyFace = new GameSquare.Image({pos: {x: 10, y: 10}, imgName: "emojiSuprized"})
-//happyFace.scaleTo(0.5)
-mainScene.add(happyFace)
+let playerSquare = new GameSquare.Rectangle({
+    pos: {x:10,y:10},
+    size: {width:50,height:50},
+    color: "red"
+})
+mainScene.add(playerSquare)
+
+// LOGIC
+playerSquare.on("keypress_ArrowRight", (p) => {
+    p.x += 10
+})
