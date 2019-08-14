@@ -2,8 +2,12 @@
 
 const GameSquare = {
     Viewport: class {
-        constructor(canvasID, width, height, scene) {
-            this._canvas = document.getElementById(canvasID) || document.body.appendChild(document.createElement("canvas"))
+        constructor(canvasID, width, height, scene, create=false) {
+            if (create == false) {
+                this._canvas = document.getElementById(canvasID) || document.body.appendChild(document.createElement("canvas"))
+            } else {
+                this._canvas = document.getElementById(canvasID).appendChild(document.createElement("canvas"))
+            }
             this._ctx = this._canvas.getContext("2d")
             this.skycolor = "white"
             GameSquare._$ctx = this._ctx
