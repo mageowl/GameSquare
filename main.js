@@ -11,7 +11,7 @@ const GameSquare = {
             this._ctx = this._canvas.getContext("2d")
             this.skycolor = "white"
             GameSquare._$ctx = this._ctx
-            if (!document.getElementById(canvasID) && (width && height)) {
+            if (!document.getElementById(canvasID) || create && (width && height)) {
                 this._canvas.width = width
                 this._canvas.height = height
             }
